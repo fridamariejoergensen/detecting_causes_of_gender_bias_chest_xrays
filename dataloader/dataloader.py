@@ -656,7 +656,7 @@ class CheXpertDataResampleModule(pl.LightningDataModule):
         sampled_df = None
         patient_info_column_names = ['pid',self.col_name_gender ,'averaged_disease_label']
         patient_info_df = pd.DataFrame(columns=patient_info_column_names) # get the gender and disease label information for each patient
-        for each_pid in patient_id_list:
+        for each_pid in tqdm(patient_id_list):
             df_this_pid = df[df[self.col_name_patient_id] == each_pid]
             len_this_pid = len(df_this_pid)
 

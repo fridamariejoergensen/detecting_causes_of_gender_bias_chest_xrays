@@ -123,7 +123,7 @@ def main(args,female_perc_in_training=None,random_state=None,chose_disease_str=N
 
     # Create output directory
     # out_name = str(model.model_name)
-    run_dir = '/work3/ninwe/run/cause_bias/'
+    run_dir = './run/'
     out_dir = run_dir + run_config
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
@@ -322,19 +322,20 @@ if __name__ == '__main__':
     if args.dataset == 'NIH':
         args.csv_file_img = '../datafiles/'+'Data_Entry_2017_v2020_clean_split.csv'
     elif args.dataset == 'chexpert':
-        args.csv_file_img = '../datafiles/'+'chexpert.sample.allrace.csv'
+        args.csv_file_img = '../datafiles/'+'chexpert.sample.allrace.csv' #TODO
     else:
         raise Exception('Not implemented.')
 
     print('hyper-parameters:')
     print(args)
-
-    if len(args.random_state.split('-')) != 2:
+    
+    if len(args.random_state.split('-')) == 2:
+        rs_min, rs_max = int(args.random_state.split('-')[0]),int(args.random_state.split('-')[1])
+    else:
         if len(args.random_state.split('-')) == 1:
             rs_min, rs_max = int(args.random_state), int(args.random_state)+1
         else:
             raise Exception('Something wrong with args.random_states : {}'.format(args.random_states))
-    rs_min, rs_max = int(args.random_state.split('-')[0]),int(args.random_state.split('-')[1])
 
     female_percent_in_training_set = [int(''.join(each)) for each in args.female_percent_in_training]
     print('female_percent_in_training_set:{}'.format(female_percent_in_training_set))
