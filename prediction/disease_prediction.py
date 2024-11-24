@@ -123,7 +123,7 @@ def main(args,female_perc_in_training=None,random_state=None,chose_disease_str=N
 
     # Create output directory
     # out_name = str(model.model_name)
-    run_dir = './run/'
+    run_dir = '/work3/s206182/run/chexpert/'
     out_dir = run_dir + run_config
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
