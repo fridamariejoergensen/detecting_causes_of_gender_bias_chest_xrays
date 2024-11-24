@@ -31,7 +31,7 @@ hp_default_value={'model':'resnet',
                   'image_size':(224,224),
                   'crop':None,
                   'prevalence_setting':'separate',
-                  'save_model':True,
+                  'save_model':False,
                   'num_workers':2,
                   'num_classes':1
 
