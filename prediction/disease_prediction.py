@@ -166,7 +166,9 @@ def main(args,female_perc_in_training=None,random_state=None,chose_disease_str=N
                                         random_state=random_state,
                                         num_classes=args.num_classes,
                                         num_per_patient=args.npp,
-                                        prevalence_setting = args.prevalence_setting
+                                        prevalence_setting = args.prevalence_setting,
+                                        isFlip=args.flip,
+
 
                 )
 
@@ -288,6 +290,7 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--npp',default=1,help='Number per patient, could be integer or None (no sampling)',type=int)
     parser.add_argument('-r', '--random_state', default='0-10', help='random state')
     parser.add_argument('-p','--img_dir',help='your img dir path here',type=str)
+    parser.add_argument('--flip',default=False, help='whether using flip labels',type=lambda x: (str(x).lower() == 'true'))
 
     # hps that set as defaults
     parser.add_argument('--lr', default=1e-6, help='learning rate, default=1e-6')

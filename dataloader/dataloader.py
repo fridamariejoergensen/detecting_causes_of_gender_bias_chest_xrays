@@ -369,7 +369,9 @@ class NIHDataResampleModule(pl.LightningDataModule):
 
     def get_prevalence(self):
         df = pd.read_csv(self.csv_file_img, header=0)
-        df_per_patient = df.groupby(['Patient ID', 'Patient Gender']).mean()
+        # df_per_patient = df.groupby(['Patient ID', 'Patient Gender']).mean()
+        df_numeric = df.select_dtypes(include=[float, int])  # or specify `np.number` to include all numeric types
+        df_per_patient = df.groupby(['Patient ID', 'Patient Gender'])[df_numeric.columns].mean()
         df_per_patient_p = df_per_patient.mean()[self.disease_labels_list].to_list()
 
         df_per_patient_gender_p = df_per_patient.groupby(['Patient Gender']).mean()[self.disease_labels_list]
@@ -398,7 +400,9 @@ class NIHDataResampleModule(pl.LightningDataModule):
     def get_prevalence_patientwise(self):
         df = pd.read_csv(self.csv_file_img, header=0)
 
-        df_per_patient = df.groupby([self.col_name_patient_id, self.col_name_gender]).mean()
+        # df_per_patient = df.groupby([self.col_name_patient_id, self.col_name_gender]).mean()
+        df_numeric = df.select_dtypes(include=[float, int])  # or specify `np.number` to include all numeric types
+        df_per_patient = df.groupby([self.col_name_patient_id, self.col_name_gender])[df_numeric.columns].mean()
         for each_labels in self.disease_labels_list:
             df_per_patient[each_labels] = df_per_patient[each_labels].apply(lambda x: 1 if x > 0 else 0)
 
@@ -549,12 +553,13 @@ class CheXpertDataResampleModule(pl.LightningDataModule):
                  random_state=None,
                  num_classes=None,
                  num_per_patient=1,
-                 prevalence_setting='separate'):
+                 prevalence_setting='separate',
+                 isFlip=False):
         super().__init__()
         self.disease_labels_list = DISEASE_LABELS_CHE
         self.img_data_dir = img_data_dir
         self.csv_file_img = csv_file_img
-
+        self.isFlip = isFlip
 
         self.outdir = outdir
         self.version_no = version_no
@@ -596,8 +601,19 @@ class CheXpertDataResampleModule(pl.LightningDataModule):
 
         self.disease_prevalence_total_pw, self.disease_prevalence_female_pw, self.disease_prevalence_male_pw = self.get_prevalence_patientwise()
 
+        
+        if 'train_flip.version_0.csv' not in os.listdir(self.outdir) and self.isFlip:
+            raise Exception('If doing label fliping experiments, you should have the csv files ready')
 
-        df_train,df_valid,df_test = self.dataset_sampling()
+        if 'train.version_0.csv' not in os.listdir(self.outdir): 
+            print('-'*30)
+            print('Start sampling... Will take a while')
+            df_train,df_valid,df_test = self.dataset_sampling()
+        else:
+            print('-'*30)
+            print(f'No need to sampling, get sampling from {self.outdir}')
+            df_train,df_valid,df_test = self.get_sampling(self.outdir)
+
         self.df_train = df_train
         self.df_valid = df_valid
         self.df_test = df_test
@@ -640,6 +656,22 @@ class CheXpertDataResampleModule(pl.LightningDataModule):
 
     def train_dataloader_nonshuffle(self):
         return DataLoader(self.train_set, self.batch_size, shuffle=False, num_workers=self.num_workers)
+    
+
+    def get_sampling(self,from_dir):
+        # version_0 --> because the sampling only rely on the random seed, but not to the version number. Version numbers matter when predicting.
+        version_number = 0 
+        if not self.isFlip:
+            train_set = pd.read_csv(os.path.join(from_dir, 'train.version_{}.csv'.format(version_number)))
+            val_set = pd.read_csv(os.path.join(from_dir, 'val.version_{}.csv'.format(version_number)))
+            test_set = pd.read_csv(os.path.join(from_dir, 'test.version_{}.csv'.format(version_number)))
+        else: # Fliping the labels
+            train_set = pd.read_csv(os.path.join(from_dir, 'train_flip.version_{}.csv'.format(version_number)))
+            val_set = pd.read_csv(os.path.join(from_dir, 'val_flip.version_{}.csv'.format(version_number)))
+            test_set = pd.read_csv(os.path.join(from_dir, 'test_flip.version_{}.csv'.format(version_number)))
+        
+
+        return train_set,val_set,test_set
 
 
     def dataset_sampling(self):
@@ -796,8 +828,12 @@ class CheXpertDataResampleModule(pl.LightningDataModule):
         df = pd.read_csv(self.csv_file_img, header=0)
         for each_l in self.disease_labels_list:
             df[each_l] = df[each_l].apply(lambda x: 1 if x == 1 else 0)
-        df_per_patient = df.groupby([self.col_name_patient_id , self.col_name_gender]).mean()
-        df_per_patient_p = df_per_patient.mean()[self.disease_labels_list].to_list()
+
+       
+        
+        df_per_patient = df.groupby([self.col_name_patient_id , self.col_name_gender])[self.disease_labels_list].mean()
+        print('DEBUG',df_per_patient)
+        df_per_patient_p = df_per_patient.mean().to_list()
 
         df_per_patient_gender_p = df_per_patient.groupby([self.col_name_gender]).mean()[self.disease_labels_list]
         df_per_patient_gender_p_male = df_per_patient_gender_p.loc[self.male].to_list()
@@ -837,7 +873,10 @@ class CheXpertDataResampleModule(pl.LightningDataModule):
         for each_l in self.disease_labels_list:
             df[each_l] = df[each_l].apply(lambda x: 1 if x == 1 else 0)
 
-        df_per_patient = df.groupby([self.col_name_patient_id, self.col_name_gender]).mean()
+        # df_per_patient = df.groupby([self.col_name_patient_id, self.col_name_gender]).mean()
+        df_numeric = df.select_dtypes(include=[float, int])  # or specify `np.number` to include all numeric types
+        df_per_patient = df.groupby([self.col_name_patient_id, self.col_name_gender])[df_numeric.columns].mean()
+        
         for each_labels in self.disease_labels_list:
             df_per_patient[each_labels] = df_per_patient[each_labels].apply(lambda x: 1 if x > 0 else 0)
 
