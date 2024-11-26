@@ -3,12 +3,18 @@ import numpy as np
 from torch.utils.data import DataLoader
 from laplace import Laplace
 from dataloader import get_train_loader  
+from models import ResNet 
 
 def main():
-    # Load the network
-    network = Net() # need to define net 
-    network.load_state_dict(torch.load('coming.pth'))  
-    network.eval() 
+    network = ResNet(
+        num_classes=num_classes,
+        lr=lr,
+        pretrained=pretrained,
+        model_scale=model_scale,
+        loss_func_type=loss_func_type
+    )
+    network.load_state_dict(torch.load('coming.pth'))  # Load pretrained weights
+    network.eval()
 
     train_loader = get_train_loader(batch_size=64)  
     la = Laplace(network, likelihood="classification", subset_of_weights="all", hessian_structure="diag")

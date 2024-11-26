@@ -601,9 +601,10 @@ class CheXpertDataResampleModule(pl.LightningDataModule):
 
         self.disease_prevalence_total_pw, self.disease_prevalence_female_pw, self.disease_prevalence_male_pw = self.get_prevalence_patientwise()
 
-        print(os.listdir(self.outdir))
-        print(self.outdir)
-        
+        print(f"self.outdir: {self.outdir}", flush=True)
+        print(f"Files in {self.outdir}: {os.listdir(self.outdir)}", flush=True)
+        print(f"self.isFlip: {self.isFlip}", flush=True)
+
         if 'train_flip.version_0.csv' not in os.listdir(self.outdir) and self.isFlip:
             raise Exception('If doing label fliping experiments, you should have the csv files ready')
 
