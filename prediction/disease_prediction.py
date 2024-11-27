@@ -234,7 +234,10 @@ def main(args,female_perc_in_training=None,random_state=None,chose_disease_str=N
     df_logits = pd.DataFrame(data=logits_val, columns=cols_names_logits)
     df_targets = pd.DataFrame(data=targets_val, columns=cols_names_targets)
     df = pd.concat([df, df_logits, df_targets], axis=1)
-    df.to_csv(os.path.join(out_dir, 'predictions.val.version_{}.csv'.format(cur_version)), index=False)
+    if args.flip:
+        df.to_csv(os.path.join(out_dir, 'predictions_flip.val.version_{}.csv'.format(cur_version)), index=False)
+    else:
+        df.to_csv(os.path.join(out_dir, 'predictions.val.version_{}.csv'.format(cur_version)), index=False)
 
     print('TESTING')
     preds_test, targets_test, logits_test = test_func(args,model, data.test_dataloader(), device)
@@ -242,7 +245,10 @@ def main(args,female_perc_in_training=None,random_state=None,chose_disease_str=N
     df_logits = pd.DataFrame(data=logits_test, columns=cols_names_logits)
     df_targets = pd.DataFrame(data=targets_test, columns=cols_names_targets)
     df = pd.concat([df, df_logits, df_targets], axis=1)
-    df.to_csv(os.path.join(out_dir, 'predictions.test.version_{}.csv'.format(cur_version)), index=False)
+    if args.flip:
+        df.to_csv(os.path.join(out_dir, 'predictions_flip.test.version_{}.csv'.format(cur_version)), index=False)
+    else:
+        df.to_csv(os.path.join(out_dir, 'predictions.test.version_{}.csv'.format(cur_version)), index=False)
 
 
     print('TESTING on train set')
@@ -252,7 +258,12 @@ def main(args,female_perc_in_training=None,random_state=None,chose_disease_str=N
     df_logits = pd.DataFrame(data=logits_test, columns=cols_names_logits)
     df_targets = pd.DataFrame(data=targets_test, columns=cols_names_targets)
     df = pd.concat([df, df_logits, df_targets], axis=1)
-    df.to_csv(os.path.join(out_dir, 'predictions.train.version_{}.csv'.format(cur_version)), index=False)
+    if args.flip:
+        df.to_csv(os.path.join(out_dir, 'predictions_flip.train.version_{}.csv'.format(cur_version)), index=False)
+    else:
+        df.to_csv(os.path.join(out_dir, 'predictions.train.version_{}.csv'.format(cur_version)), index=False)
+
+
 
     # print('EMBEDDINGS')
     #
