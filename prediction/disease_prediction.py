@@ -331,6 +331,8 @@ if __name__ == '__main__':
 
     print('hyper-parameters:')
     print(args)
+
+    args.epochs = int(args.epchs)
     
     if len(args.random_state.split('-')) == 2:
         rs_min, rs_max = int(args.random_state.split('-')[0]),int(args.random_state.split('-')[1])
