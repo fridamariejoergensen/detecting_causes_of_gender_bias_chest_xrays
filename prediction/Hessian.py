@@ -40,7 +40,7 @@ def main(isFlip=False):
             num_classes=1,
             isFlip=False  # Set isFlip=False
         )
-
+    
     train_loader = data_module.train_dataloader()
 
     # Initialize the Resnet
