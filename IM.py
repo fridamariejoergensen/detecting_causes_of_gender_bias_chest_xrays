@@ -1,3 +1,7 @@
+import sys
+sys.path.append('../../detecting_causes_of_gender_bias_chest_xrays')
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import Counter
