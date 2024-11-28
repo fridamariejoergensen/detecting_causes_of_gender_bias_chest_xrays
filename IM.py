@@ -172,3 +172,4 @@ for i in tqdm(range(dataset_size), desc="Influence Matrix Row"):
 print("Influence matrix computation completed.")
 
 np.save('influence_matrix.npy', influence_matrix.numpy())
+np.save('sample_indices.npy', subset_indices) 
