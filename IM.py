@@ -19,7 +19,7 @@ from torch.utils.data import Dataset, DataLoader
 from torch.utils.data import random_split
 from torch.utils.data import Subset
 from torchvision.transforms import Compose, ToTensor, Normalize
-
+from tqdm import tqdm  
 
 batch_size_train = 64
 batch_size_test = 1000
