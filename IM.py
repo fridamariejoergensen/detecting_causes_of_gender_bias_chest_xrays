@@ -14,7 +14,6 @@ import torchvision
 import torchvision.datasets as datasets
 import torch.nn.functional as F
 import torch.optim as optim
-from laplace import Laplace
 import torchvision.transforms as transforms
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data import random_split
