@@ -157,3 +157,4 @@ widgetsnbextension==4.0.5
 yarg==0.1.9
 yarl==1.8.2
 zipp==3.14.0
+laplace-torch
