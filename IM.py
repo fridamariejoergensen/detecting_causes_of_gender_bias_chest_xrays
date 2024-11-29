@@ -1,7 +1,4 @@
 import sys
-sys.path.append('../../detecting_causes_of_gender_bias_chest_xrays')
-
-
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import Counter
@@ -127,6 +124,8 @@ inverse_hessian_diag = 1 / hessian_diag_full
 print("Inverse Diagonal Hessian:", inverse_hessian_diag)
 
 print("Processing data...")
+subset_size = 1000  
+
 subset_indices = []
 subset_data = []
 subset_labels = []
@@ -171,5 +170,6 @@ for i in tqdm(range(dataset_size), desc="Influence Matrix Row"):
 
 print("Influence matrix computation completed.")
 
-np.save('influence_matrix.npy', influence_matrix.numpy())
-np.save('sample_indices.npy', subset_indices) 
+output_dir = "/work3/s206182/projects/detecting_causes_of_gender_bias_chest_xrays"
+np.save(f"{output_dir}/influence_matrix.npy", influence_matrix.numpy())
+np.save(f"{output_dir}/sample_indices.npy", subset_indices)
