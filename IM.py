@@ -125,8 +125,6 @@ print("Inverse Diagonal Hessian:", inverse_hessian_diag)
 
 print("Processing data...")
 
-subset_size = 1000  
-
 subset_indices = []
 subset_data = []
 subset_labels = []
