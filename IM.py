@@ -124,6 +124,7 @@ inverse_hessian_diag = 1 / hessian_diag_full
 print("Inverse Diagonal Hessian:", inverse_hessian_diag)
 
 print("Processing data...")
+
 subset_size = 1000  
 
 subset_indices = []
