@@ -268,9 +268,9 @@ if __name__ == '__main__':
         args.num_classes = 1
 
     if args.image_size == 224:
-        args.img_data_dir = args.img_dir + f'{args.dataset}/preproc_224x224/'
+        args.img_data_dir = args.img_dir+'{}/preproc_224x224/'.format(args.dataset)
     elif args.image_size == 1024:
-        args.img_data_dir = args.img_dir + f'{args.dataset}/images/'
+        args.img_data_dir = args.img_dir+'{}/images/'.format(args.dataset)
 
     if args.dataset == 'NIH':
         args.csv_file_img = '../datafiles/Data_Entry_2017_v2020_clean_split.csv'
