@@ -100,9 +100,31 @@ print("Preparing training dataloader...")
 train_loader = data_module.train_dataloader()
 print("Training dataloader ready.")
 
+# print("Starting Hessian computation...")
+# progress_loader = tqdm(train_loader, desc="Hessian Computation Progress")
+# la.fit(progress_loader)
+# print("Hessian computation completed. Extracting Hessian...")
+
+# hessian_MD = la.H
+# np.save('version_0_hessian_normal.npy', hessian_MD.cpu().numpy())
+# print("Hessian calculation complete. Saved to 'version_0_hessian_normal.npy'.")
+
+class ProgressLoader:
+    def __init__(self, dataloader, desc="Processing", **tqdm_kwargs):
+        self.dataloader = dataloader
+        self.progress_bar = tqdm(self.dataloader, desc=desc, **tqdm_kwargs)
+
+    def __iter__(self):
+        for batch in self.progress_bar:
+            yield batch
+
+    def __len__(self):
+        return len(self.dataloader)
+
+progress_loader = ProgressLoader(train_loader, desc="Hessian Computation Progress", unit="batch")
+
 print("Starting Hessian computation...")
-progress_loader = tqdm(train_loader, desc="Hessian Computation Progress")
-la.fit(progress_loader)
+la.fit(progress_loader) 
 print("Hessian computation completed. Extracting Hessian...")
 
 hessian_MD = la.H
