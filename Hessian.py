@@ -137,7 +137,7 @@ progress_loader = ProgressLoader(
 
 for i, batch in enumerate(train_loader):
     print(f"Batch {i + 1}: {batch['image'].shape}, {batch['labels'].shape}")
-    if i == 5:  # Limit to a few batches for debugging
+    if i == 3:  # Limit to a few batches for debugging
         break
 
 print(f"Dataset size: {len(train_loader.dataset)}")
@@ -145,11 +145,18 @@ print(f"Dataloader size: {len(train_loader)}")
 
 #print("Starting Hessian computation...")
 print("Starting simple case")
-batch = next(iter(train_loader))
-images, labels = batch['image'], batch['labels']
-output = la.model(images)
-print("Model output:", output)
-print("Simple case done")
+progress_loader = ProgressLoader(
+    train_loader,
+    desc="Hessian Computation Progress",
+    total=len(data_module.train_set),
+    unit="batch"
+)
+
+for i, batch in enumerate(progress_loader):
+    print(f"Processing batch {i + 1}/{len(progress_loader)}: "
+          f"Images shape: {batch['image'].shape}, Labels shape: {batch['label'].shape}")
+    if i == 5:  # Debugging with only 5 batches
+        break
 
 # la.fit(progress_loader)  # Progress will be displayed
 # print("Hessian computation completed. Extracting Hessian...")
