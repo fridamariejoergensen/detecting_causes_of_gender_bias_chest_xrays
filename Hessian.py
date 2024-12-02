@@ -146,7 +146,7 @@ print(f"Dataloader size: {len(train_loader)}")
 #print("Starting Hessian computation...")
 print("Starting simple case")
 batch = next(iter(train_loader))
-images, labels = batch['image'], batch['label']
+images, labels = batch['image'], batch['labels']
 output = la.model(images)
 print("Model output:", output)
 print("Simple case done")
