@@ -39,11 +39,21 @@ chexpert_model = load_model(ckpt_dir)
 print("CheXpert model loaded successfully.")
 print(chexpert_model)
 
-chexpert_model.eval
+# Wrap model if needed
+class WrappedModel(torch.nn.Module):
+    def __init__(self, base_model):
+        super().__init__()
+        self.base_model = base_model
+
+    def forward(self, x):
+        if isinstance(x, dict):  # Handle dictionary input
+            x = x['image']
+        return self.base_model(x)
+
+wrapped_model = WrappedModel(chexpert_model)
 
 
-la = Laplace(chexpert_model, likelihood="classification", subset_of_weights="all", hessian_structure="diag")
-
+la = Laplace(wrapped_model, likelihood="classification", subset_of_weights="all", hessian_structure="diag")
 
 # Define parameters for initialization
 img_data_dir = "/work3/s206182/dataset/chexpert/preproc_224x224/"
