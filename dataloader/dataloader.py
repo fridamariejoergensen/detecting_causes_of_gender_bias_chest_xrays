@@ -86,7 +86,12 @@ class NIHDataset(Dataset):
             image = self.augment(image)
 
         if self.pseudo_rgb:
-            image = image.repeat(3, 1, 1)
+                if image.shape[0] == 1:  # Grayscale to RGB
+                    image = image.repeat(3, 1, 1)
+                elif image.shape[0] == 3:  # Already RGB
+                    pass
+                else:
+                    raise ValueError(f"Unexpected number of channels: {image.shape[0]}")
 
         return {'image': image, 'label': label}
 
