@@ -110,23 +110,22 @@ print("Training dataloader ready.")
 # print("Hessian calculation complete. Saved to 'version_0_hessian_normal.npy'.")
 
 class ProgressLoader:
-    """
-    A wrapper for the DataLoader that adds a progress bar using tqdm.
-    """
     def __init__(self, dataloader, desc="Processing", **tqdm_kwargs):
         self.dataloader = dataloader
         self.progress_bar = tqdm(self.dataloader, desc=desc, **tqdm_kwargs)
 
     def __iter__(self):
-        return iter(self.progress_bar)
+        for i, batch in enumerate(self.progress_bar):
+            print(f"Processing batch {i + 1}/{len(self.dataloader)}")  # Debug
+            yield batch
 
     def __len__(self):
         return len(self.dataloader)
 
     @property
     def dataset(self):
-        # Expose the dataset attribute of the underlying DataLoader
         return self.dataloader.dataset
+
 
 
 progress_loader = ProgressLoader(
@@ -136,6 +135,10 @@ progress_loader = ProgressLoader(
     unit="batch"
 )
 
+for i, batch in enumerate(train_loader):
+    print(f"Batch {i + 1}: {batch['image'].shape}, {batch['label'].shape}")
+    if i == 5:  # Limit to a few batches for debugging
+        break
 
 print(f"Dataset size: {len(train_loader.dataset)}")
 print(f"Dataloader size: {len(train_loader)}")
