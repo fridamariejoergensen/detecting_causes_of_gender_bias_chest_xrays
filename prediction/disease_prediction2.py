@@ -242,7 +242,7 @@ if __name__ == '__main__':
     parser.add_argument('--dev', default=0)
     parser.add_argument('-s', '--dataset', default='NIH', help='Dataset', choices=['NIH', 'chexpert'])
     parser.add_argument('-d', '--disease_label', default=['Pneumothorax'], help='Chosen disease label', type=str, nargs='*')
-    parser.add_argument('-n', '--npp', default=1, help='Number per patient, could be integer or None (no sampling)', type=int)
+    parser.add_argument('-n', '--npp', default=1, help='Number per patient, could be integer or None (no sampling)', type=lambda x: None if x.lower() == 'none' else int(x))
     parser.add_argument('-r', '--random_state', default='0-10', help='random state')
     parser.add_argument('-p', '--img_dir', help='your img dir path here', type=str)
     parser.add_argument('--flip', default=False, help='whether using flip labels', type=lambda x: (str(x).lower() == 'true'))
