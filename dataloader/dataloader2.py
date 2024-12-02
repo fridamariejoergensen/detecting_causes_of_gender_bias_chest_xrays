@@ -221,8 +221,12 @@ class CheXpertDataResampleModule(pl.LightningDataModule):
         for each_l in self.disease_labels_list:
             df[each_l] = df[each_l].apply(lambda x: 1 if x == 1 else 0)
 
-        patient_id_list = sorted(set(df[self.col_name_patient_id].to_list()))
+        patient_id_list = list(set(df[self.col_name_patient_id].to_list()))
+        patient_id_list.sort()
 
+        print('#' * 30)
+        print(patient_id_list[:10])
+        print('#' * 30)
         sampled_df = None
         patient_info_column_names = ['pid', 'averaged_disease_label']
         patient_info_df = pd.DataFrame(columns=patient_info_column_names)
