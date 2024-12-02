@@ -154,7 +154,7 @@ progress_loader = ProgressLoader(
 
 for i, batch in enumerate(progress_loader):
     print(f"Processing batch {i + 1}/{len(progress_loader)}: "
-          f"Images shape: {batch['image'].shape}, Labels shape: {batch['label'].shape}")
+          f"Images shape: {batch['image'].shape}, Labels shape: {batch['labels'].shape}")
     if i == 5:  # Debugging with only 5 batches
         break
 
