@@ -32,7 +32,7 @@ def load_model(ckpt_dir):
     return model
 
 
-ckpt_dir = "prediction/run/chexpert-Pleural Effusion-fp50-npp1-rs0-image_size224/version_0/checkpoints"
+ckpt_dir = "/work3/s206182/run/chexpert-Pleural Effusion-fp50-npp1-rs0-image_size224/version_0/checkpoints"
 assert os.path.exists(ckpt_dir), f"Checkpoint directory does not exist: {ckpt_dir}"
 
 chexpert_model = load_model(ckpt_dir)
