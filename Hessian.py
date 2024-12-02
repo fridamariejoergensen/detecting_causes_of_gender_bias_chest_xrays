@@ -45,8 +45,8 @@ la = Laplace(chexpert_model, likelihood="classification", subset_of_weights="all
 
 
 # Define parameters for initialization
-img_data_dir = "prediction/run/chexpert-Pleural Effusion-fp50-npp1-rs0-image_size224"
-csv_file_img = "datafiles/chexpert.sample.allrace.csv"
+img_data_dir = "/work3/s206182/dataset/chexpert/preproc_224x224"
+csv_file_img = "/work3/s206182/run/chexpert/chexpert-Pleural Effusion-fp50-npp1-rs0-epochs50-image_size224-save_modelTrue/train.version_0.csv"
 image_size = 224
 pseudo_rgb = True
 batch_size = 32
