@@ -110,9 +110,13 @@ print("Training dataloader ready.")
 # print("Hessian calculation complete. Saved to 'version_0_hessian_normal.npy'.")
 
 class ProgressLoader:
+    """
+    A wrapper for the DataLoader that adds a progress bar using tqdm.
+    """
     def __init__(self, dataloader, desc="Processing", **tqdm_kwargs):
         self.dataloader = dataloader
-        self.progress_bar = tqdm(self.dataloader, desc=desc, **tqdm_kwargs)
+        self.progress_bar = tqdm(desc=desc, **tqdm_kwargs)
+        self.dataset = dataloader.dataset  
 
     def __iter__(self):
         for batch in self.progress_bar:
@@ -121,10 +125,15 @@ class ProgressLoader:
     def __len__(self):
         return len(self.dataloader)
 
-progress_loader = ProgressLoader(train_loader, desc="Hessian Computation Progress", unit="batch")
+progress_loader = ProgressLoader(
+    train_loader, 
+    desc="Hessian Computation Progress", 
+    total=len(train_loader), 
+    unit="batch"
+)
 
 print("Starting Hessian computation...")
-la.fit(progress_loader) 
+la.fit(progress_loader)  # This now tracks progress
 print("Hessian computation completed. Extracting Hessian...")
 
 hessian_MD = la.H
