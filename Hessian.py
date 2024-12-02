@@ -136,7 +136,7 @@ progress_loader = ProgressLoader(
 )
 
 for i, batch in enumerate(train_loader):
-    print(f"Batch {i + 1}: {batch['image'].shape}, {batch['label'].shape}")
+    print(f"Batch {i + 1}: {batch['image'].shape}, {batch['labels'].shape}")
     if i == 5:  # Limit to a few batches for debugging
         break
 
@@ -144,9 +144,9 @@ print(f"Dataset size: {len(train_loader.dataset)}")
 print(f"Dataloader size: {len(train_loader)}")
 
 print("Starting Hessian computation...")
-la.fit(progress_loader)  # Progress will be displayed
-print("Hessian computation completed. Extracting Hessian...")
+# la.fit(progress_loader)  # Progress will be displayed
+# print("Hessian computation completed. Extracting Hessian...")
 
-hessian_MD = la.H
-np.save('version_0_hessian_normal.npy', hessian_MD.cpu().numpy())
-print("Hessian calculation complete.")
+# hessian_MD = la.H
+# np.save('version_0_hessian_normal.npy', hessian_MD.cpu().numpy())
+# print("Hessian calculation complete.")
