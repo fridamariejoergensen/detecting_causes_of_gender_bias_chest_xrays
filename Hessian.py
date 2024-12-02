@@ -110,30 +110,26 @@ print("Training dataloader ready.")
 # print("Hessian calculation complete. Saved to 'version_0_hessian_normal.npy'.")
 
 class ProgressLoader:
-    def __init__(self, dataloader, desc="Processing", **tqdm_kwargs):
+    def __init__(self, dataloader, desc="Processing", verbose=False, **tqdm_kwargs):
         self.dataloader = dataloader
+        self.verbose = verbose
         self.progress_bar = tqdm(self.dataloader, desc=desc, **tqdm_kwargs)
 
     def __iter__(self):
         for i, batch in enumerate(self.progress_bar):
-            print(f"Processing batch {i + 1}/{len(self.dataloader)}")  # Debug
+            if self.verbose:
+                self.progress_bar.write(f"Processing batch {i + 1}/{len(self.dataloader)}: "
+                                        f"Images shape: {batch['image'].shape}, Labels shape: {batch['label'].shape}")
             yield batch
-
-    def __len__(self):
-        return len(self.dataloader)
-
-    @property
-    def dataset(self):
-        return self.dataloader.dataset
-
-
 
 progress_loader = ProgressLoader(
     train_loader, 
     desc="Hessian Computation Progress", 
-    total=len(data_module.train_set),  
-    unit="batch"
+    total=len(data_module.train_set),
+    unit="batch",
+    verbose=False  # Set to True if debugging is needed
 )
+
 
 for i, batch in enumerate(train_loader):
     print(f"Batch {i + 1}: {batch['image'].shape}, {batch['labels'].shape}")
