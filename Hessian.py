@@ -1,76 +1,91 @@
-from models import ResNet  # Import your ResNet model
-from dataloader.dataloader import CheXpertDataResampleModule
+from prediction.models import ResNet
+from prediction.disease_prediction import hp_default_value
+import os
 import torch
+from laplace import Laplace
 import numpy as np
-from laplace import laplace 
+from dataloader.dataloader import CheXpertDataResampleModule
 
-def main(isFlip=False):
-    # Data module based on isFlip (for train_loader)
-    if isFlip:
-        print("Running with isFlip=True configuration.")
-        data_module = CheXpertDataResampleModule(
-            img_data_dir="/path/to/images/",  # TODO Where exactly?
-            csv_file_img="prediction/train_flip.version_0.csv",  
-            image_size=224,
-            pseudo_rgb=True,
-            batch_size=64,
-            num_workers=4,
-            augmentation=True,
-            outdir="/path/to/output_dir/",
-            version_no=0,
-            chose_disease="Pleural Effusion",
-            random_state=42,
-            num_classes=1,
-            isFlip=True  # Set isFlip=True
-        )
-    else:
-        print("Running with isFlip=False configuration.")
-        data_module = CheXpertDataResampleModule(
-            img_data_dir="/path/to/images/",  # TODO update here as well
-            csv_file_img="prediction/run/chexpert-Pleural Effusion-fp50-npp1-rs0-image_size224/train.version_0.csv",  
-            image_size=224,
-            pseudo_rgb=True,
-            batch_size=64,
-            num_workers=4,
-            augmentation=True,
-            outdir="/path/to/output_dir/",
-            version_no=0,
-            chose_disease="Pleural Effusion",
-            random_state=42,
-            num_classes=1,
-            isFlip=False  # Set isFlip=False
-        )
+
+def load_model(ckpt_dir):
+    model_choose = hp_default_value['model']
+    num_classes = hp_default_value['num_classes']
+    lr = hp_default_value['lr']
+    pretrained = True  # Replace with actual value or source
+    model_scale = hp_default_value['model_scale']
+
+    if model_choose == 'resnet':
+        model_type = ResNet
+
+    file_list = [f for f in os.listdir(ckpt_dir) if f.endswith('.ckpt')]
+    assert len(file_list) == 1, f"Expected 1 checkpoint file, but found {len(file_list)}."
+    ckpt_path = os.path.join(ckpt_dir, file_list[0])
     
-    train_loader = data_module.train_dataloader()
-
-    # Initialize the Resnet
-    num_classes = 1
-    lr = 0.001
-    pretrained = False
-    model_scale = '18'
-    loss_func_type = 'BCE'
-
-    network = ResNet(
+    model = model_type.load_from_checkpoint(
+        ckpt_path,
         num_classes=num_classes,
         lr=lr,
         pretrained=pretrained,
-        model_scale=model_scale,
-        loss_func_type=loss_func_type
+        model_scale=model_scale
     )
 
-    checkpoint_path = 'coming.pth' # TODO need to locate where to access the models
-    state_dict = torch.load(checkpoint_path) 
-    network.load_state_dict(state_dict)
-    network.eval()
+    return model
 
-    # Laplace approximation but only to extract hessian
-    la = Laplace(network, likelihood="classification", subset_of_weights="all", hessian_structure="diag")
-    la.fit(train_loader)
-    hessian_MD = la.H
 
-    np.save('hessian_MD.npy', hessian_MD.cpu().numpy())
-    print("Hessian calculation complete. Saved to 'hessian_MD.npy'.")
+ckpt_dir = "prediction/run/chexpert-Pleural Effusion-fp50-npp1-rs0-image_size224/version_0/checkpoints"
+assert os.path.exists(ckpt_dir), f"Checkpoint directory does not exist: {ckpt_dir}"
 
-if __name__ == "__main__":
-    isFlip = True  # Change here for non flipped
-    main(isFlip=isFlip)
+chexpert_model = load_model(ckpt_dir)
+print("CheXpert model loaded successfully.")
+
+chexpert_model.eval
+
+
+la = Laplace(chexpert_model, likelihood="classification", subset_of_weights="all", hessian_structure="diag")
+
+
+# Define parameters for initialization
+img_data_dir = "prediction/run/chexpert-Pleural Effusion-fp50-npp1-rs0-image_size224"
+csv_file_img = "datafiles/chexpert.sample.allrace.csv"
+image_size = 224
+pseudo_rgb = True
+batch_size = 32
+num_workers = 4
+augmentation = True
+outdir = "prediction/run/chexpert-Pleural Effusion-fp50-npp1-rs0-image_size224"
+version_no = "0"
+female_perc_in_training = 50
+chose_disease = "Pleural Effusion"
+random_state = 42
+num_classes = 1
+num_per_patient = 1
+prevalence_setting = 'separate'
+isFlip = False
+
+# Initialize the data module
+data_module = CheXpertDataResampleModule(
+    img_data_dir=img_data_dir,
+    csv_file_img=csv_file_img,
+    image_size=image_size,
+    pseudo_rgb=pseudo_rgb,
+    batch_size=batch_size,
+    num_workers=num_workers,
+    augmentation=augmentation,
+    outdir=outdir,
+    version_no=version_no,
+    female_perc_in_training=female_perc_in_training,
+    chose_disease=chose_disease,
+    random_state=random_state,
+    num_classes=num_classes,
+    num_per_patient=num_per_patient,
+    prevalence_setting=prevalence_setting,
+    isFlip=isFlip
+)
+
+# Get the training dataloader
+train_loader = data_module.train_dataloader()
+
+la.fit(train_loader)
+hessian_MD = la.H
+np.save('version_0_hessian_normal.npy', hessian_MD.cpu().numpy())
+print("Hessian calculation complete. Saved to 'version_0_hessian_normal.npy'.")
