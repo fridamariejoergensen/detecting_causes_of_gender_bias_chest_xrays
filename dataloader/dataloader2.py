@@ -314,19 +314,7 @@ class CheXpertDataResampleModule(pl.LightningDataModule):
         return dict_per_patient_p
 
     def prioritize_sampling(self, df, N):
-        df_disease = df[df[self.chose_disease] == 1]
-        df_nondisease = df[df[self.chose_disease] == 0]
-
-        if len(df_disease) >= N:
-            sampled = df_disease.sample(n=N, random_state=self.rs)
-        else:
-            sampled = df_disease
-            N -= len(sampled)
-            sampled_nondisease = df_nondisease.sample(n=N, random_state=self.rs)
-            sampled = pd.concat([sampled, sampled_nondisease], axis=0)
-            assert len(sampled.columns) == len(sampled_nondisease.columns)
-
-        return sampled
+        return df
 
     def set_split(self, df, train_frac, val_frac, test_frac, rs):
         test = df.sample(frac=test_frac, random_state=rs)
