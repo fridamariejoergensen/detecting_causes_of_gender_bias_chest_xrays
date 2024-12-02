@@ -115,12 +115,11 @@ class ProgressLoader:
     """
     def __init__(self, dataloader, desc="Processing", **tqdm_kwargs):
         self.dataloader = dataloader
-        self.progress_bar = tqdm(desc=desc, **tqdm_kwargs)
-        self.dataset = dataloader.dataset  
+        self.desc = desc
+        self.tqdm_kwargs = tqdm_kwargs
 
     def __iter__(self):
-        for batch in self.progress_bar:
-            yield batch
+        return iter(tqdm(self.dataloader, desc=self.desc, **self.tqdm_kwargs))
 
     def __len__(self):
         return len(self.dataloader)
@@ -128,18 +127,18 @@ class ProgressLoader:
 progress_loader = ProgressLoader(
     train_loader, 
     desc="Hessian Computation Progress", 
-    total=len(train_loader), 
+    total=len(data_module.train_set),  
     unit="batch"
 )
+
 
 print(f"Dataset size: {len(train_loader.dataset)}")
 print(f"Dataloader size: {len(train_loader)}")
 
 print("Starting Hessian computation...")
-la.fit(progress_loader)
-
+la.fit(progress_loader)  # Progress will be displayed
 print("Hessian computation completed. Extracting Hessian...")
 
 hessian_MD = la.H
 np.save('version_0_hessian_normal.npy', hessian_MD.cpu().numpy())
-print("Hessian calculation complete. Saved to 'version_0_hessian_normal.npy'.")
+print("Hessian calculation complete.")
