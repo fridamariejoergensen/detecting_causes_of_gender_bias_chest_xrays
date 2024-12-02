@@ -99,13 +99,6 @@ print("Preparing training dataloader...")
 train_loader = data_module.train_dataloader()
 print("Training dataloader ready.")
 
-# Inspect the first batch
-for batch in train_loader:
-    print(batch.keys())  # Should contain 'image' and 'label'
-    print(batch['image'].shape)  # Inspect image shape
-    print(batch['label'].shape)  # Inspect label shape
-    break
-
 print("Starting Hessian computation...")
 la.fit(train_loader)
 print("Hessian computation completed. Extracting Hessian...")
