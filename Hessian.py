@@ -5,6 +5,7 @@ import torch
 from laplace import Laplace
 import numpy as np
 from dataloader.dataloader1 import CheXpertDataResampleModule
+from tqdm import tqdm
 
 
 def load_model(ckpt_dir):
@@ -100,7 +101,8 @@ train_loader = data_module.train_dataloader()
 print("Training dataloader ready.")
 
 print("Starting Hessian computation...")
-la.fit(train_loader)
+progress_loader = tqdm(train_loader, desc="Hessian Computation Progress")
+la.fit(progress_loader)
 print("Hessian computation completed. Extracting Hessian...")
 
 hessian_MD = la.H
