@@ -132,7 +132,8 @@ class CheXpertDataResampleModule(pl.LightningDataModule):
         self.num_per_patient = num_per_patient
         if self.num_per_patient is not None:
             assert self.num_per_patient >= 1
-
+        
+        self.col_name_patient_id = 'patient_id'
         self.prevalence_setting = prevalence_setting
         assert self.prevalence_setting in ['separate', 'total', 'equal']
 
