@@ -520,7 +520,7 @@ class ChexpertDatasetNew(Dataset):
                 else:
                     raise ValueError(f"Unexpected number of channels: {image.shape[0]}")
 
-        return {'image': image, 'labels': label}
+        return {'image': image, 'label': label}
 
     def get_sample(self, item):
         sample = self.samples[item]
