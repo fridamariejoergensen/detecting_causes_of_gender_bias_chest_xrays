@@ -132,8 +132,12 @@ progress_loader = ProgressLoader(
     unit="batch"
 )
 
+print(f"Dataset size: {len(train_loader.dataset)}")
+print(f"Dataloader size: {len(train_loader)}")
+
 print("Starting Hessian computation...")
-la.fit(progress_loader)  # This now tracks progress
+la.fit(progress_loader)
+
 print("Hessian computation completed. Extracting Hessian...")
 
 hessian_MD = la.H
