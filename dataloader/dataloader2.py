@@ -236,7 +236,7 @@ class CheXpertDataResampleModule(pl.LightningDataModule):
             df_this_pid = df[df[self.col_name_patient_id] == each_pid]
             len_this_pid = len(df_this_pid)
 
-            N = len_this_pid if self.num_per_patient is None else min(len_this_pid, self.num_per_patient)
+            N = len_this_pid
 
             sampled_this_pid = self.prioritize_sampling(df_this_pid, N=N)
             if sampled_df is None:
