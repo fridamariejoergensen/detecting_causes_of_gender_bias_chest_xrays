@@ -115,14 +115,19 @@ class ProgressLoader:
     """
     def __init__(self, dataloader, desc="Processing", **tqdm_kwargs):
         self.dataloader = dataloader
-        self.desc = desc
-        self.tqdm_kwargs = tqdm_kwargs
+        self.progress_bar = tqdm(self.dataloader, desc=desc, **tqdm_kwargs)
 
     def __iter__(self):
-        return iter(tqdm(self.dataloader, desc=self.desc, **self.tqdm_kwargs))
+        return iter(self.progress_bar)
 
     def __len__(self):
         return len(self.dataloader)
+
+    @property
+    def dataset(self):
+        # Expose the dataset attribute of the underlying DataLoader
+        return self.dataloader.dataset
+
 
 progress_loader = ProgressLoader(
     train_loader, 
