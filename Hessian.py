@@ -4,7 +4,7 @@ import os
 import torch
 from laplace import Laplace
 import numpy as np
-from dataloader.dataloader import CheXpertDataResampleModule
+from dataloader.dataloader1 import CheXpertDataResampleModule
 
 
 def load_model(ckpt_dir):
