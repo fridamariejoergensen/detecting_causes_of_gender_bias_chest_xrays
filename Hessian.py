@@ -32,7 +32,7 @@ def load_model(ckpt_dir):
     return model
 
 
-ckpt_dir = "/work3/s206182/run/chexpert/chexpert-Pleural Effusion-fp50-npp1-rs0-image_size224/version_0/checkpoints"
+ckpt_dir = "/work3/s206182/run/chexpert/chexpert-Pleural Effusion-fp50-npp1-rs0-epochs50-image_size224-save_modelTrue"
 assert os.path.exists(ckpt_dir), f"Checkpoint directory does not exist: {ckpt_dir}"
 
 chexpert_model = load_model(ckpt_dir)
@@ -81,11 +81,17 @@ data_module = CheXpertDataResampleModule(
     prevalence_setting=prevalence_setting,
     isFlip=isFlip
 )
+print("Data module initialized.")
 
 # Get the training dataloader
+print("Preparing training dataloader...")
 train_loader = data_module.train_dataloader()
+print("Training dataloader ready.")
 
+print("Starting Hessian computation...")
 la.fit(train_loader)
+print("Hessian computation completed. Extracting Hessian...")
+
 hessian_MD = la.H
 np.save('version_0_hessian_normal.npy', hessian_MD.cpu().numpy())
 print("Hessian calculation complete. Saved to 'version_0_hessian_normal.npy'.")
