@@ -505,22 +505,26 @@ class ChexpertDatasetNew(Dataset):
     def __getitem__(self, item):
         sample = self.get_sample(item)
 
-        # image = torch.from_numpy(sample['image'])
+        # Convert image to tensor
         image = T.ToTensor()(sample['image'])
         label = torch.from_numpy(sample['label'])
 
+        # Apply augmentations if enabled
         if self.do_augment:
             image = self.augment(image)
 
+        # Ensure proper channel dimensions for pseudo RGB
         if self.pseudo_rgb:
-                if image.shape[0] == 1:  # Grayscale to RGB
-                    image = image.repeat(3, 1, 1)
-                elif image.shape[0] == 3:  # Already RGB
-                    pass
-                else:
-                    raise ValueError(f"Unexpected number of channels: {image.shape[0]}")
+            if image.shape[0] == 1:  # Grayscale to RGB
+                image = image.repeat(3, 1, 1)
+            elif image.shape[0] == 3:  # Already RGB
+                pass
+            else:
+                raise ValueError(f"Unexpected number of channels: {image.shape[0]}")
 
-        return {'image': image, 'label': label}
+        # Return the data with 'labels' as the key
+        return {'image': image, 'labels': label}
+
 
     def get_sample(self, item):
         sample = self.samples[item]
