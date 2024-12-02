@@ -143,7 +143,14 @@ for i, batch in enumerate(train_loader):
 print(f"Dataset size: {len(train_loader.dataset)}")
 print(f"Dataloader size: {len(train_loader)}")
 
-print("Starting Hessian computation...")
+#print("Starting Hessian computation...")
+print("Starting simple case")
+batch = next(iter(train_loader))
+images, labels = batch['image'], batch['label']
+output = la.model(images)
+print("Model output:", output)
+print("Simple case done")
+
 # la.fit(progress_loader)  # Progress will be displayed
 # print("Hessian computation completed. Extracting Hessian...")
 
