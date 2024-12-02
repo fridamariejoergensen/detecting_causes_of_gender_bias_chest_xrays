@@ -112,7 +112,7 @@ class CheXpertDataResampleModule(pl.LightningDataModule):
                  augmentation,
                  outdir, 
                  version_no, 
-                 chose_disease='No Finding', 
+                 chose_disease='Pleural effusion', 
                  random_state=None, 
                  num_classes=None,
                  num_per_patient=None, 
