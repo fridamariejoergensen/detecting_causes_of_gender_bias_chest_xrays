@@ -29,7 +29,7 @@
 nvidia-smi
 # Load the cuda module
 module load cuda/12.0
-source /work3/s206182/venv/py_chest/bin/activate
+source /work3/s206182/venv/sample_valuation/bin/activate
 
 # Run the Python script
 python3 ./Hessian.py
