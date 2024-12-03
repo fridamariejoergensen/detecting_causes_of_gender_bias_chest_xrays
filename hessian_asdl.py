@@ -6,8 +6,7 @@ from prediction.models import ResNet
 from prediction.disease_prediction import hp_default_value
 import os
 import torch
-from asdfghjkl import hessian
-
+from asdl import hessian
 
 # Debug: Loading Model
 def load_model(ckpt_dir):
