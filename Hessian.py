@@ -6,6 +6,8 @@ from laplace import Laplace
 import numpy as np
 from dataloader.dataloader1 import CheXpertDataResampleModule
 from tqdm import tqdm
+from torch.utils.data import Subset
+
 
 
 def load_model(ckpt_dir):
@@ -110,26 +112,28 @@ print("Training dataloader ready.")
 # print("Hessian calculation complete. Saved to 'version_0_hessian_normal.npy'.")
 
 class ProgressLoader:
-    def __init__(self, dataloader, desc="Processing", verbose=False, **tqdm_kwargs):
+    def __init__(self, dataloader, desc="Processing", **tqdm_kwargs):
         self.dataloader = dataloader
-        self.verbose = verbose
         self.progress_bar = tqdm(self.dataloader, desc=desc, **tqdm_kwargs)
 
     def __iter__(self):
         for i, batch in enumerate(self.progress_bar):
-            if self.verbose:
-                self.progress_bar.write(f"Processing batch {i + 1}/{len(self.dataloader)}: "
-                                        f"Images shape: {batch['image'].shape}, Labels shape: {batch['label'].shape}")
+            print(f"Processing batch {i + 1}/{len(self.dataloader)}")  # Debug
             yield batch
+
+    def __len__(self):
+        return len(self.dataloader)
+
+    @property
+    def dataset(self):
+        return self.dataloader.dataset
 
 progress_loader = ProgressLoader(
     train_loader, 
     desc="Hessian Computation Progress", 
-    total=len(data_module.train_set),
-    unit="batch",
-    verbose=False  # Set to True if debugging is needed
+    total=len(data_module.train_set),  
+    unit="batch"
 )
-
 
 for i, batch in enumerate(train_loader):
     print(f"Batch {i + 1}: {batch['image'].shape}, {batch['labels'].shape}")
@@ -153,6 +157,24 @@ for i, batch in enumerate(progress_loader):
           f"Images shape: {batch['image'].shape}, Labels shape: {batch['labels'].shape}")
     if i == 5:  # Debugging with only 5 batches
         break
+
+small_dataset_size = 100
+
+small_train_set = Subset(data_module.train_set, range(small_dataset_size))
+
+small_train_loader = torch.utils.data.DataLoader(
+    small_train_set,
+    batch_size=batch_size, 
+    shuffle=True, 
+    num_workers=num_workers
+)
+
+print("Testing la.fit with a smaller dataset...")
+try:
+    la.fit(small_train_loader)
+    print("Hessian computation for smaller dataset completed successfully.")
+except Exception as e:
+    print(f"Error during Hessian computation: {e}")
 
 # la.fit(progress_loader)  # Progress will be displayed
 # print("Hessian computation completed. Extracting Hessian...")
