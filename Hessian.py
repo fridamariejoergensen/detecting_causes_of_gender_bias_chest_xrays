@@ -179,6 +179,24 @@ for i, batch in enumerate(small_train_loader):
         break
 
 
+small_dataset_size = 100
+
+small_train_set = Subset(data_module.train_set, range(small_dataset_size))
+
+small_train_loader = torch.utils.data.DataLoader(
+    small_train_set,
+    batch_size=batch_size, 
+    shuffle=True, 
+    num_workers=num_workers
+)
+
+print("Testing la.fit with a smaller dataset...")
+try:
+    la.fit(small_train_loader)
+    print("Hessian computation for smaller dataset completed successfully.")
+except Exception as e:
+    print(f"Error during Hessian computation: {e}")
+
 # la.fit(progress_loader)  # Progress will be displayed
 # print("Hessian computation completed. Extracting Hessian...")
 
