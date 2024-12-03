@@ -132,56 +132,8 @@ progress_loader = ProgressLoader(
     unit="batch"
 )
 
-for i, batch in enumerate(train_loader):
-    print(f"Batch {i + 1}: {batch['images'].shape}, {batch['labels'].shape}")
-    if i == 3:  # Limit to a few batches for debugging
-        break
-
-print(f"Dataset size: {len(train_loader.dataset)}")
-print(f"Dataloader size: {len(train_loader)}")
-
-#print("Starting Hessian computation...")
-print("Starting simple case")
-progress_loader = ProgressLoader(
-    train_loader,
-    desc="Hessian Computation Progress",
-    total=len(data_module.train_set),
-    unit="batch"
-)
-
-for i, batch in enumerate(progress_loader):
-    print(f"Processing batch {i + 1}/{len(progress_loader)}: "
-          f"Images shape: {batch['images'].shape}, Labels shape: {batch['labels'].shape}")
-    if i == 5:  # Debugging with only 5 batches
-        break
-
 small_dataset_size = 100
-
 small_train_set = Subset(data_module.train_set, range(small_dataset_size))
-
-small_train_loader = torch.utils.data.DataLoader(
-    small_train_set,
-    batch_size=batch_size, 
-    shuffle=True, 
-    num_workers=num_workers
-)
-
-la = Laplace(wrapped_model, likelihood="classification", subset_of_weights='last_layer', hessian_structure="diag")
-
-print("Testing la.fit with a smaller dataset...")
-print("Testing manual iteration...")
-for i, batch in enumerate(small_train_loader):
-    images, labels = batch['images'], batch['labels']
-    output = la.model(images)
-    print(f"Batch {i + 1} output shape: {output.shape}")
-    if i == 2:  # Limit to a few iterations
-        break
-
-
-small_dataset_size = 100
-
-small_train_set = Subset(data_module.train_set, range(small_dataset_size))
-
 small_train_loader = torch.utils.data.DataLoader(
     small_train_set,
     batch_size=batch_size, 
@@ -191,6 +143,8 @@ small_train_loader = torch.utils.data.DataLoader(
 
 
 print("Testing la.fit with a smaller dataset...")
+la = Laplace(wrapped_model, "classification", subset_of_weights="all", hessian_structure="diag")
+
 try:
     la.fit(small_train_loader)
     print("Hessian computation for smaller dataset completed successfully.")
