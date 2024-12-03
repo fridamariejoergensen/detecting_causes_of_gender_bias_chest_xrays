@@ -166,6 +166,8 @@ small_train_loader = torch.utils.data.DataLoader(
     num_workers=num_workers
 )
 
+la = Laplace(wrapped_model, likelihood="classification", subset_of_weights='last_layer', hessian_structure="diag")
+
 print("Testing la.fit with a smaller dataset...")
 print("Testing manual iteration...")
 for i, batch in enumerate(small_train_loader):
@@ -187,7 +189,6 @@ small_train_loader = torch.utils.data.DataLoader(
     num_workers=num_workers
 )
 
-la = Laplace(wrapped_model, likelihood="classification", subset_of_weights='last_layer', hessian_structure="diag")
 
 print("Testing la.fit with a smaller dataset...")
 try:
