@@ -143,7 +143,7 @@ small_train_loader = torch.utils.data.DataLoader(
 
 
 print("Testing la.fit with a smaller dataset...")
-la = Laplace(wrapped_model, "classification", subset_of_weights="all", hessian_structure="diag")
+la = Laplace(wrapped_model, "classification", subset_of_weights="last_layer", hessian_structure="diag")
 
 try:
     la.fit(small_train_loader)
