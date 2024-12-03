@@ -6,7 +6,7 @@ from prediction.models import ResNet
 from prediction.disease_prediction import hp_default_value
 import os
 import torch
-import asdl.hessian
+from asdfghjkl import hessian
 
 
 # Debug: Loading Model
@@ -102,7 +102,7 @@ print("Small train DataLoader initialized.")
 
 # Debug: Initialize Hessian Computation
 print("Initializing Hessian computation...")
-hessian_computer = asdl.hessian(model, criterion)
+hessian_computer = hessian(model, criterion)
 print("Hessian computation module initialized.")
 
 # Iterate through the small dataset
