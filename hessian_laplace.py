@@ -43,17 +43,16 @@ print("CheXpert model loaded successfully.")
 print(chexpert_model)
 
 # Wrap model if needed
-class WrappedModel(torch.nn.Module):
-    def __init__(self, base_model):
-        super().__init__()
-        self.base_model = base_model
+# class WrappedModel(torch.nn.Module):
+#    def __init__(self, base_model):
+#        super().__init__()
+#
+#    def forward(self, x):
+#        if isinstance(x, dict):  # Handle dictionary input
+#            x = x['images']
+#        return self.base_model(x)
 
-    def forward(self, x):
-        if isinstance(x, dict):  # Handle dictionary input
-            x = x['images']
-        return self.base_model(x)
-
-wrapped_model = WrappedModel(chexpert_model)
+# wrapped_model = WrappedModel(chexpert_model)
 
 # Define parameters for initialization
 img_data_dir = "/work3/s206182/dataset/chexpert/preproc_224x224/"
@@ -143,7 +142,7 @@ small_train_loader = torch.utils.data.DataLoader(
 
 
 print("Testing la.fit with a smaller dataset...")
-la = Laplace(wrapped_model, "classification", subset_of_weights="last_layer", hessian_structure="diag")
+la = Laplace(chexpert_model, "classification", subset_of_weights="last_layer", hessian_structure="diag")
 
 try:
     la.fit(small_train_loader)
