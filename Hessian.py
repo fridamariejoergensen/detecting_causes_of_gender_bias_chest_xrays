@@ -136,7 +136,7 @@ progress_loader = ProgressLoader(
 )
 
 for i, batch in enumerate(train_loader):
-    print(f"Batch {i + 1}: {batch['image'].shape}, {batch['labels'].shape}")
+    print(f"Batch {i + 1}: {batch['image'].shape}, {batch['label'].shape}")
     if i == 3:  # Limit to a few batches for debugging
         break
 
@@ -154,7 +154,7 @@ progress_loader = ProgressLoader(
 
 for i, batch in enumerate(progress_loader):
     print(f"Processing batch {i + 1}/{len(progress_loader)}: "
-          f"Images shape: {batch['image'].shape}, Labels shape: {batch['labels'].shape}")
+          f"Images shape: {batch['image'].shape}, Labels shape: {batch['label'].shape}")
     if i == 5:  # Debugging with only 5 batches
         break
 
@@ -172,7 +172,7 @@ small_train_loader = torch.utils.data.DataLoader(
 print("Testing la.fit with a smaller dataset...")
 print("Testing manual iteration...")
 for i, batch in enumerate(small_train_loader):
-    images, labels = batch['image'], batch['labels']
+    images, labels = batch['image'], batch['label']
     output = la.model(images)
     print(f"Batch {i + 1} output shape: {output.shape}")
     if i == 2:  # Limit to a few iterations

@@ -523,7 +523,7 @@ class ChexpertDatasetNew(Dataset):
                 raise ValueError(f"Unexpected number of channels: {image.shape[0]}")
 
         # Return the data with 'labels' as the key
-        return {'image': image, 'labels': label}
+        return {'image': image, 'label': label}
 
 
     def get_sample(self, item):
