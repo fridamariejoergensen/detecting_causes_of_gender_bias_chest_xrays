@@ -56,7 +56,7 @@ class WrappedModel(torch.nn.Module):
 wrapped_model = WrappedModel(chexpert_model)
 
 
-la = Laplace(wrapped_model, likelihood="classification", subset_of_weights="all", hessian_structure="diag", subset_of_weights='last_layer')
+la = Laplace(wrapped_model, likelihood="classification", subset_of_weights='last_layer', hessian_structure="diag")
 
 # Define parameters for initialization
 img_data_dir = "/work3/s206182/dataset/chexpert/preproc_224x224/"
