@@ -8,6 +8,7 @@ import os
 import torch
 import asdl.hessian
 
+
 # Debug: Loading Model
 def load_model(ckpt_dir):
     print("Loading model...")
@@ -101,7 +102,7 @@ print("Small train DataLoader initialized.")
 
 # Debug: Initialize Hessian Computation
 print("Initializing Hessian computation...")
-hessian_computer = asdl.hessian.Hessian(model, criterion)
+hessian_computer = asdl.hessian(model, criterion)
 print("Hessian computation module initialized.")
 
 # Iterate through the small dataset
