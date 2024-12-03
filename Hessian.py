@@ -170,11 +170,14 @@ small_train_loader = torch.utils.data.DataLoader(
 )
 
 print("Testing la.fit with a smaller dataset...")
-try:
-    la.fit(small_train_loader)
-    print("Hessian computation for smaller dataset completed successfully.")
-except Exception as e:
-    print(f"Error during Hessian computation: {e}")
+print("Testing manual iteration...")
+for i, batch in enumerate(small_train_loader):
+    images, labels = batch['image'], batch['labels']
+    output = la.model(images)
+    print(f"Batch {i + 1} output shape: {output.shape}")
+    if i == 2:  # Limit to a few iterations
+        break
+
 
 # la.fit(progress_loader)  # Progress will be displayed
 # print("Hessian computation completed. Extracting Hessian...")
