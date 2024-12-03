@@ -32,4 +32,4 @@ module load cuda/12.0
 source /work3/s206182/venv/py_chest/bin/activate
 
 # Run the Python script
-python3 ./hessian_asdl.py
+python3 ./hessian_laplace.py
