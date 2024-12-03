@@ -151,6 +151,8 @@ try:
 except Exception as e:
     print(f"Error during Hessian computation: {e}")
 
+hessian_diag = la.H
+print("Hessian diagonal:", hessian_diag.cpu().numpy())
 # la.fit(progress_loader)  # Progress will be displayed
 # print("Hessian computation completed. Extracting Hessian...")
 
