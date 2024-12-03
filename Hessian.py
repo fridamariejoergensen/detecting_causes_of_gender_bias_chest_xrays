@@ -55,9 +55,6 @@ class WrappedModel(torch.nn.Module):
 
 wrapped_model = WrappedModel(chexpert_model)
 
-
-la = Laplace(wrapped_model, likelihood="classification", subset_of_weights='last_layer', hessian_structure="diag")
-
 # Define parameters for initialization
 img_data_dir = "/work3/s206182/dataset/chexpert/preproc_224x224/"
 csv_file_img = "/work3/s206182/run/chexpert/chexpert-Pleural Effusion-fp50-npp1-rs0-epochs50-image_size224-save_modelTrue/train.version_0.csv"
@@ -189,6 +186,8 @@ small_train_loader = torch.utils.data.DataLoader(
     shuffle=True, 
     num_workers=num_workers
 )
+
+la = Laplace(wrapped_model, likelihood="classification", subset_of_weights='last_layer', hessian_structure="diag")
 
 print("Testing la.fit with a smaller dataset...")
 try:
