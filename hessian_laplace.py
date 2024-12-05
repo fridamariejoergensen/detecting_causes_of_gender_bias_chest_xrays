@@ -3,7 +3,7 @@ import os
 import torch
 from laplace import Laplace
 import numpy as np
-from dataloader.dataloader import CheXpertDataResampleModule
+from dataloader.dataloader1 import CheXpertDataResampleModule
 from tqdm import tqdm
 from torch.utils.data import Subset
 
