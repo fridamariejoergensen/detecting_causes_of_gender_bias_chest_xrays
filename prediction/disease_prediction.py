@@ -205,7 +205,7 @@ def main(args,female_perc_in_training=None,random_state=None,chose_disease_str=N
     # train
     trainer = pl.Trainer(
         # callbacks=[checkpoint_callback],
-        callbacks=[EarlyStopping(monitor="val_loss", mode="min",patience=3)],
+        callbacks=[EarlyStopping(monitor="val_loss", mode="min",patience=5)],
         log_every_n_steps = 1,
         max_epochs=args.epochs,
         gpus=args.gpus,
