@@ -56,14 +56,13 @@ print(chexpert_model)
 
 # Define parameters for initialization
 img_data_dir = "/work3/s206182/dataset/chexpert/preproc_224x224/"
-csv_file_img = "/work3/s206182/run/chexpert/chexpert-Pleural Effusion-fp50-npp1-rs0-epochs50-image_size224-save_modelTrue/train.version_0.csv"
+csv_file_img = "/work3/s206182/run/chexpert//work3/s206182/run/chexpert/chexpert-Pleural Effusion-fp50-npp1-rs0-model_scale50-epochs50-image_size224-save_modelTrue/train.version_0.csv"
 image_size = 224
 pseudo_rgb = True
 batch_size = 32
 num_workers = 4
 augmentation = True
-outdir = "prediction/run/chexpert-Pleural Effusion-fp50-npp1-rs0-image_size224"
-version_no = "0"
+outdir = "prediction/"
 female_perc_in_training = 50
 chose_disease = "Pleural Effusion"
 random_state = 42
