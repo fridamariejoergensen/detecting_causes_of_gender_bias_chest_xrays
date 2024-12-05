@@ -15,10 +15,10 @@ from torch.utils.data import Subset
 # Hyperparameters and settings
 hp_default_value = {
     'model': 'resnet',
-    'model_scale': '50',
+    'model_scale': '18',
     'lr': 1e-6,
     'bs': 64,
-    'epochs': 20,
+    'epochs': 41,
     'pretrained': True,
     'augmentation': True,
     'is_multilabel': False,
