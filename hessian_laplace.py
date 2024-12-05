@@ -1,5 +1,4 @@
 from prediction.models import ResNet
-from prediction.disease_prediction import hp_default_value
 import os
 import torch
 from laplace import Laplace
@@ -8,7 +7,22 @@ from dataloader.dataloader1 import CheXpertDataResampleModule
 from tqdm import tqdm
 from torch.utils.data import Subset
 
+hp_default_value={'model':'resnet',
+                  'model_scale':'18',
+                  'lr':1e-6,
+                  'bs':64,
+                  'epochs':20,
+                  'pretrained':True,
+                  'augmentation':True,
+                  'is_multilabel':False,
+                  'image_size':(224,224),
+                  'crop':None,
+                  'prevalence_setting':'separate',
+                  'save_model':False,
+                  'num_workers':2,
+                  'num_classes':1
 
+}
 
 def load_model(ckpt_dir):
     model_choose = hp_default_value['model']
@@ -33,8 +47,6 @@ def load_model(ckpt_dir):
     )
 
     return model
-
-ResNet.model_scale = 50
 
 ckpt_dir = "/work3/s206182/run/chexpert/chexpert-Pleural Effusion-fp50-npp1-rs0-model_scale50-epochs50-image_size224-save_modelTrue/version_0/checkpoints/"
 assert os.path.exists(ckpt_dir), f"Checkpoint directory does not exist: {ckpt_dir}"
