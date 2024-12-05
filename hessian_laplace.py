@@ -8,7 +8,7 @@ from tqdm import tqdm
 from torch.utils.data import Subset
 
 hp_default_value={'model':'resnet',
-                  'model_scale':'18',
+                  'model_scale':'50',
                   'lr':1e-6,
                   'bs':64,
                   'epochs':20,
