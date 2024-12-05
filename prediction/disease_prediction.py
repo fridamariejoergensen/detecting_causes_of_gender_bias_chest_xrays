@@ -251,8 +251,7 @@ def main(args,female_perc_in_training=None,random_state=None,chose_disease_str=N
 
 
     print('TESTING on train set')
-    # trainloader need to be non shuffled!
-    preds_test, targets_test, logits_test = test_func(args,model, data.train_dataloader_nonshuffle(), device)
+    preds_test, targets_test, logits_test = test_func(args,model, data.train_dataloader(), device)
     df = pd.DataFrame(data=preds_test, columns=cols_names_classes)
     df_logits = pd.DataFrame(data=logits_test, columns=cols_names_logits)
     df_targets = pd.DataFrame(data=targets_test, columns=cols_names_targets)

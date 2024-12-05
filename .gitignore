@@ -6,3 +6,4 @@ __pycache__
 /prediction/run/chexpert-Pleural Effusion-fp50-npp1-rs0-image_size224/temp_version_0
 prediction/run/chexpert-Pleural Effusion-fp50-npp1-rs0-image_size224/version_0
 
+preprocess/Data/
