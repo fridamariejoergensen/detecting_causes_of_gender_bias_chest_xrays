@@ -34,6 +34,7 @@ def load_model(ckpt_dir):
 
     return model
 
+ResNet.model_scale = 18
 
 ckpt_dir = "/work3/s206182/run/chexpert/chexpert-Pleural Effusion-fp50-npp1-rs0-model_scale50-epochs50-image_size224-save_modelTrue/version_0/checkpoints/"
 assert os.path.exists(ckpt_dir), f"Checkpoint directory does not exist: {ckpt_dir}"
