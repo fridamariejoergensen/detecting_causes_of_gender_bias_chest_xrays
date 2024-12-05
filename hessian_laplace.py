@@ -35,7 +35,7 @@ def load_model(ckpt_dir):
     return model
 
 
-ckpt_dir = "/work3/s206182/run/chexpert/chexpert-Pleural Effusion-fp50-npp1-rs0-epochs50-image_size224-save_modelTrue/version_0/checkpoints"
+ckpt_dir = "/work3/s206182/run/chexpert/chexpert-Pleural Effusion-fp50-npp1-rs0-model_scale50-epochs50-image_size224-save_modelTrue/version_0/checkpoints"
 assert os.path.exists(ckpt_dir), f"Checkpoint directory does not exist: {ckpt_dir}"
 
 chexpert_model = load_model(ckpt_dir)
@@ -62,6 +62,7 @@ pseudo_rgb = True
 batch_size = 32
 num_workers = 4
 augmentation = True
+version_no = 0
 outdir = "prediction/"
 female_perc_in_training = 50
 chose_disease = "Pleural Effusion"
