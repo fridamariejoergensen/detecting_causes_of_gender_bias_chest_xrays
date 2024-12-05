@@ -7,28 +7,34 @@ from dataloader.dataloader1 import CheXpertDataResampleModule
 from tqdm import tqdm
 from torch.utils.data import Subset
 
-hp_default_value={'model':'resnet',
-                  'model_scale':'18',
-                  'lr':1e-6,
-                  'bs':64,
-                  'epochs':50,
-                  'pretrained':True,
-                  'augmentation':True,
-                  'is_multilabel':False,
-                  'image_size':(224,224),
-                  'crop':None,
-                  'prevalence_setting':'separate',
-                  'save_model':False,
-                  'num_workers':2,
-                  'num_classes':1
 
+
+
+
+
+# Hyperparameters and settings
+hp_default_value = {
+    'model': 'resnet',
+    'model_scale': '50',
+    'lr': 1e-6,
+    'bs': 64,
+    'epochs': 20,
+    'pretrained': True,
+    'augmentation': True,
+    'is_multilabel': False,
+    'image_size': (224, 224),
+    'crop': None,
+    'prevalence_setting': 'separate',
+    'save_model': False,
+    'num_workers': 2,
+    'num_classes': 1
 }
 
 def load_model(ckpt_dir):
     model_choose = hp_default_value['model']
     num_classes = hp_default_value['num_classes']
     lr = hp_default_value['lr']
-    pretrained = True  # Replace with actual value or source
+    pretrained = hp_default_value['pretrained']
     model_scale = hp_default_value['model_scale']
 
     if model_choose == 'resnet':
@@ -48,35 +54,23 @@ def load_model(ckpt_dir):
 
     return model
 
-ckpt_dir = "/work3/s206182/run/chexpert/chexpert-Pleural Effusion-fp50-npp1-rs0-image_size224-save_modelTrue/version_0/checkpoints/"
+# Load the pre-trained model
+ckpt_dir = "prediction/run/chexpert-Pleural Effusion-fp50-npp1-rs0-image_size224/version_0/checkpoints"
 assert os.path.exists(ckpt_dir), f"Checkpoint directory does not exist: {ckpt_dir}"
-
 chexpert_model = load_model(ckpt_dir)
+chexpert_model.eval()
 print("CheXpert model loaded successfully.")
-print(chexpert_model)
 
-# Wrap model if needed
-# class WrappedModel(torch.nn.Module):
-#    def __init__(self, base_model):
-#        super().__init__()
-#
-#    def forward(self, x):
-#        if isinstance(x, dict):  # Handle dictionary input
-#            x = x['images']
-#        return self.base_model(x)
-
-# wrapped_model = WrappedModel(chexpert_model)
-
-# Define parameters for initialization
-img_data_dir = "/work3/s206182/dataset/chexpert/preproc_224x224/"
-csv_file_img = "/work3/s206182/projects/detecting_causes_of_gender_bias_chest_xrays/prediction/run/chexpert/chexpert-Pleural Effusion-fp50-npp1-rs0-model_scale50-epochs50-image_size224-save_modelTrue/train.version_0.csv" 
+# Data module setup
+img_data_dir = "preprocess/Data/preproc_224x224/"
+csv_file_img = "datafiles/chexpert.sample.allrace.csv"
 image_size = 224
 pseudo_rgb = True
 batch_size = 32
 num_workers = 4
 augmentation = True
-version_no = 0
-outdir = "prediction/"
+outdir = "prediction/run/chexpert-Pleural Effusion-fp50-npp1-rs0-image_size224/"
+version_no = "0"
 female_perc_in_training = 50
 chose_disease = "Pleural Effusion"
 random_state = 42
@@ -85,7 +79,6 @@ num_per_patient = 1
 prevalence_setting = 'separate'
 isFlip = False
 
-# Initialize the data module
 data_module = CheXpertDataResampleModule(
     img_data_dir=img_data_dir,
     csv_file_img=csv_file_img,
@@ -104,20 +97,68 @@ data_module = CheXpertDataResampleModule(
     prevalence_setting=prevalence_setting,
     isFlip=isFlip
 )
+
+train_loader = data_module.train_dataloader()
+
+
+# Wrap the model for dict-like input
+class MyResNet18(torch.nn.Module):
+    def __init__(self, base_model):
+        super().__init__()
+        self.model = base_model
+
+    def forward(self, data):
+        device = next(self.parameters()).device
+        images = data["images"].to(device)
+        return self.model(images)
+
+# Initialize wrapped model
+wrapped_model = MyResNet18(chexpert_model)
+wrapped_model.eval()
+
+# Disable gradients for all layers except the last layer
+for param in wrapped_model.parameters():
+    param.requires_grad = False
+
+for param in wrapped_model.model.model.fc.parameters():
+    param.requires_grad = True
+
 print("Data module initialized.")
 
-# Get the training dataloader
-print("Preparing training dataloader...")
-train_loader = data_module.train_dataloader()
+la = Laplace(
+    wrapped_model,
+    likelihood="classification",
+    subset_of_weights="last_layer",
+    hessian_structure="diag"
+)
+
+print("Preparing Datasetclass thning")
+from torch.utils.data import Dataset, DataLoader
+
+class PreprocessedDataset(Dataset):
+    def __init__(self, data_loader):
+        self.data = []
+        for batch in data_loader:
+            images = batch["images"]
+            labels = batch["labels"]
+            for i in range(images.size(0)): 
+                self.data.append({"images": images[i], "labels": labels[i]})
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        data_point = self.data[idx]
+        return {"images": data_point["images"], "labels": data_point["labels"]}
+
+preprocessed_dataset = PreprocessedDataset(train_loader)
+train_loader_preprocessed = DataLoader(preprocessed_dataset, batch_size=32)
 print("Training dataloader ready.")
 
+print("Starting hessian computation")
 la = Laplace(chexpert_model, "classification", subset_of_weights="last_layer", hessian_structure="diag")
-
-try:
-    la.fit(train_loader)
-    print("Hessian computation for last layer completed successfully.")
-except Exception as e:
-    print(f"Error during Hessian computation: {e}")
+la.fit(train_loader_preprocessed)
+print("Hessian computation finalized")
 
 hessian_diag = la.H
 print("Hessian diagonal:", hessian_diag.cpu().numpy())
