@@ -39,4 +39,4 @@ source /work3/s206182/venv/py_chest/bin/activate
 
 # python3 ./disease_prediction.py -s chexpert -d 'Pleural Effusion' -n 1 -r 0 -p '/work3/s206182/dataset/' --flip 'false' --save_model 'true' --epochs 50
 
-python3 ./disease_prediction.py -s chexpert -d 'Pleural Effusion' -f 50 -n None -r 0 -p '/work3/s206182/dataset/'  --flip 'false' --save_model 'true' --epochs 50 --model_scale '50'
+python3 ./disease_prediction.py -s chexpert -d 'Pleural Effusion' -f 50 -n None -r 0 -p '/work3/s206182/dataset/' --flip 'false' --save_model 'true' --epochs 50 --model_scale '50'

@@ -285,6 +285,13 @@ def main(args,female_perc_in_training=None,random_state=None,chose_disease_str=N
         model_para_dir = os.path.join(out_dir,'version_{}'.format(cur_version))
         shutil.rmtree(model_para_dir)
 
+    def parse_npp(value):
+        if str(value).lower() == 'none':
+            return None  # Convert 'None' to Python None
+        try:
+            return int(value)  # Convert valid integers
+        except ValueError:
+            raise argparse.ArgumentTypeError(f"Invalid value for --npp: {value}")
 
 
 if __name__ == '__main__':
@@ -296,7 +303,7 @@ if __name__ == '__main__':
     parser.add_argument('-s','--dataset',default='NIH',help='Dataset', choices =['NIH','chexpert'])
     parser.add_argument('-d','--disease_label',default=['Pneumothorax'], help='Chosen disease label', type=str, nargs='*')
     parser.add_argument('-f', '--female_percent_in_training', default=50, help='Female percentage in training set, should be in the [0,50,100]', type=list, nargs='+')
-    parser.add_argument('-n', '--npp',default=1,help='Number per patient, could be integer or None (no sampling)',type=int)
+    parser.add_argument('-n', '--npp', default=1, help='Number per patient, could be integer or None (no sampling)', type=parse_npp)
     parser.add_argument('-r', '--random_state', default='0-10', help='random state')
     parser.add_argument('-p','--img_dir',help='your img dir path here',type=str)
     parser.add_argument('--flip',default=False, help='whether using flip labels',type=lambda x: (str(x).lower() == 'true'))
