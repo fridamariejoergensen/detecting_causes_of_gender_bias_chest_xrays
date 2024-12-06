@@ -351,10 +351,6 @@ if __name__ == '__main__':
         else:
             raise Exception('Something wrong with args.random_states : {}'.format(args.random_states))
 
-    if args.npp == 0:
-        npp = None  # Treat 0 as "no sampling"
-    else:
-        npp = args.npp
 
     female_percent_in_training_set = [int(''.join(each)) for each in args.female_percent_in_training]
     print('female_percent_in_training_set:{}'.format(female_percent_in_training_set))
