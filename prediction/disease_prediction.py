@@ -36,7 +36,13 @@ hp_default_value={'model':'resnet',
 
 }
 
-
+def parse_npp(value):
+        if str(value).lower() == 'none':
+            return None  # Convert 'None' to Python None
+        try:
+            return int(value)  # Convert valid integers
+        except ValueError:
+            raise argparse.ArgumentTypeError(f"Invalid value for --npp: {value}")
 
 def get_cur_version(dir_path):
     i = 0
@@ -284,15 +290,6 @@ def main(args,female_perc_in_training=None,random_state=None,chose_disease_str=N
     if args.save_model == False:
         model_para_dir = os.path.join(out_dir,'version_{}'.format(cur_version))
         shutil.rmtree(model_para_dir)
-
-    def parse_npp(value):
-        if str(value).lower() == 'none':
-            return None  # Convert 'None' to Python None
-        try:
-            return int(value)  # Convert valid integers
-        except ValueError:
-            raise argparse.ArgumentTypeError(f"Invalid value for --npp: {value}")
-
 
 if __name__ == '__main__':
     parser = ArgumentParser()
