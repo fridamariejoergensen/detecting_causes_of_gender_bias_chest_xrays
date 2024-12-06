@@ -17,7 +17,7 @@ from tqdm import tqdm
 from argparse import ArgumentParser
 import shutil
 import numpy as np
-
+import argparse
 
 hp_default_value={'model':'resnet',
                   'model_scale':'50',
